@@ -7,7 +7,6 @@ interface LogLine {
   id?: number
   level: LogLevel
   message: string
-  timestamp?: string
 }
 
 interface LogStreamProps {
@@ -32,11 +31,13 @@ const levelPrefix: Record<LogLevel, string> = {
 
 export function LogStream({ runId, onDone, onError }: LogStreamProps) {
   const [lines, setLines] = useState<LogLine[]>([])
+  const [streamingText, setStreamingText] = useState<string>('')
   const [done, setDone] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     setLines([])
+    setStreamingText('')
     setDone(false)
 
     const es = new EventSource(`/api/agents/logs/${runId}`)
@@ -45,6 +46,7 @@ export function LogStream({ runId, onDone, onError }: LogStreamProps) {
       const data = JSON.parse(e.data as string) as Record<string, unknown>
 
       if (data.type === 'run_done') {
+        setStreamingText('')
         setDone(true)
         onDone?.(data.output as string | undefined)
         es.close()
@@ -52,34 +54,36 @@ export function LogStream({ runId, onDone, onError }: LogStreamProps) {
       }
 
       if (data.type === 'run_error') {
+        setStreamingText('')
         setDone(true)
         onError?.(data.message as string)
         es.close()
         return
       }
 
+      // Live text chunk from claude CLI
+      if (data.type === 'chunk' && data.text) {
+        setStreamingText(data.text as string)
+        return
+      }
+
+      // Persisted log line (info/warn/error/success)
       if (data.level && data.message) {
         setLines((prev) => [
           ...prev,
-          {
-            id: data.id as number | undefined,
-            level: data.level as LogLevel,
-            message: data.message as string,
-          },
+          { id: data.id as number | undefined, level: data.level as LogLevel, message: data.message as string },
         ])
       }
     }
 
-    es.onerror = () => {
-      es.close()
-    }
+    es.onerror = () => es.close()
 
     return () => es.close()
   }, [runId, onDone, onError])
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [lines])
+  }, [lines, streamingText])
 
   return (
     <div className="bg-blue-deep rounded-xl border border-white/10 overflow-hidden flex flex-col">
@@ -98,9 +102,11 @@ export function LogStream({ runId, onDone, onError }: LogStreamProps) {
 
       {/* Log lines */}
       <div className="font-mono text-xs p-4 space-y-1 min-h-32 max-h-96 overflow-y-auto">
-        {lines.length === 0 && !done && (
+        {lines.length === 0 && !streamingText && !done && (
           <p className="text-white/30 animate-pulse">Initialisation…</p>
         )}
+
+        {/* Status log lines */}
         {lines.map((line, i) => (
           <p key={line.id ?? i} className={levelClasses[line.level]}>
             <span className="text-white/20 mr-2 select-none">›</span>
@@ -108,9 +114,16 @@ export function LogStream({ runId, onDone, onError }: LogStreamProps) {
             {line.message}
           </p>
         ))}
-        {done && (
-          <p className="text-white/20 mt-2 select-none">── fin ──</p>
+
+        {/* Live streaming output from claude CLI */}
+        {streamingText && (
+          <div className="mt-2 pt-2 border-t border-white/10">
+            <p className="text-white/30 text-[10px] uppercase tracking-widest mb-2 select-none">sortie en cours</p>
+            <pre className="text-white/70 whitespace-pre-wrap leading-relaxed">{streamingText}</pre>
+          </div>
         )}
+
+        {done && <p className="text-white/20 mt-2 select-none">── fin ──</p>}
         <div ref={bottomRef} />
       </div>
     </div>
