@@ -1,26 +1,103 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* VO2 font families — CSS vars injected by next/font/google in layout.tsx */
+  --font-jost: var(--font-jost);
+  --font-dm-sans: var(--font-dm-sans);
+  --font-mono: var(--font-jetbrains-mono);
+  --font-inter: var(--font-inter);
+
+  /* VO2 Blue palette */
+  --color-blue-deep: #1E2761;
+  --color-blue-primary: #34477C;
+  --color-blue-vo2: #4C6EF5;
+  --color-blue-vo2-600: #3B5BDB;
+  --color-blue-vo2-700: #364FC7;
+  --color-blue-light: #4A6FA5;
+  --color-blue-vo2-100: #DBE4FF;
+  --color-blue-vo2-50: #F0F4FF;
+
+  /* VO2 Neutrals */
+  --color-text-primary: #1A1D2B;
+  --color-text-secondary: #5A6178;
+  --color-text-muted: #8B91A5;
+  --color-surface: #F7F8FA;
+  --color-subtle-bg: #EEF0F5;
+  --color-border: #E2E5ED;
+  --color-border-accent: #CDD2DE;
+
+  /* VO2 Semantic */
+  --color-vo2-green: #059669;
+  --color-vo2-green-bg: #ECFDF5;
+  --color-vo2-gold: #92700C;
+  --color-vo2-gold-bg: #FFFBEB;
+  --color-vo2-gold-border: #FDE68A;
+
+  /* Border radius */
+  --radius-card: 12px;
+  --radius-badge: 20px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root {
+  --blue-deep: #1E2761;
+  --blue-primary: #34477C;
+  --blue-vo2: #4C6EF5;
+  --blue-vo2-600: #3B5BDB;
+  --blue-vo2-700: #364FC7;
+  --blue-light: #4A6FA5;
+  --blue-vo2-100: #DBE4FF;
+  --blue-vo2-50: #F0F4FF;
+  --text-primary: #1A1D2B;
+  --text-secondary: #5A6178;
+  --text-muted: #8B91A5;
+  --surface: #F7F8FA;
+  --subtle-bg: #EEF0F5;
+  --border: #E2E5ED;
+  --border-accent: #CDD2DE;
+  --zinc-50: #FAFAFA;
+  --green: #059669;
+  --green-bg: #ECFDF5;
+  --gold: #92700C;
+  --gold-bg: #FFFBEB;
+  --gold-border: #FDE68A;
+  --red: #DC2626;
+  --red-bg: #FEF2F2;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--zinc-50);
+  color: var(--text-primary);
+  font-family: var(--font-dm-sans), sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-jost), sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+}
+
+.label-mono {
+  font-family: var(--font-jetbrains-mono), monospace;
+  font-size: 9px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--text-muted);
+}
+
+.badge {
+  font-family: var(--font-jetbrains-mono), monospace;
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  border-radius: 20px;
+  padding: 2px 8px;
 }
