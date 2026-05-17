@@ -1,12 +1,62 @@
 import { NextRequest } from 'next/server'
-import { spawn } from 'child_process'
 import { createClient } from '@/lib/supabase/server'
-import { AGENT_SYSTEM_PROMPTS } from '@/lib/claude'
+import { createServiceClient } from '@/lib/supabase/service'
+import { AGENT_SYSTEM_PROMPTS, runClaude } from '@/lib/claude'
 import type { AgentType } from '@/types'
 
 export const maxDuration = 300
 
-const CLAUDE_BIN = process.env.CLAUDE_BIN ?? '/Users/vo2group/.npm-global/bin/claude'
+interface BaTicketProposal {
+  id: string
+  name: string
+  description: string
+  priority: 'low' | 'medium' | 'high' | 'critical'
+  assignee_agent: AgentType
+}
+
+function parseBaTickets(output: string): BaTicketProposal[] {
+  try {
+    const match = output.match(/\{[\s\S]*\}/)
+    if (!match) return []
+    const parsed = JSON.parse(match[0]) as { tickets?: BaTicketProposal[] }
+    return Array.isArray(parsed.tickets) ? parsed.tickets : []
+  } catch {
+    return []
+  }
+}
+
+interface PersonalisationRow {
+  instructions: string
+  files: { name: string; content: string }[]
+}
+
+async function buildSystemPrompt(agentType: AgentType): Promise<string> {
+  const service = createServiceClient()
+
+  const [{ data: global }, { data: agent }] = await Promise.all([
+    service.from('agent_personalisation').select('instructions, files').is('agent_type', null).single(),
+    service.from('agent_personalisation').select('instructions, files').eq('agent_type', agentType).single(),
+  ])
+
+  const core = AGENT_SYSTEM_PROMPTS[agentType]
+
+  const sections: string[] = [core]
+
+  const toSection = (row: PersonalisationRow | null, label: string) => {
+    if (!row) return
+    const parts: string[] = []
+    if (row.instructions?.trim()) parts.push(row.instructions.trim())
+    for (const f of row.files ?? []) {
+      if (f.content?.trim()) parts.push(`--- ${f.name} ---\n${f.content.trim()}`)
+    }
+    if (parts.length > 0) sections.push(`## ${label}\n${parts.join('\n\n')}`)
+  }
+
+  toSection(global as PersonalisationRow | null, 'Global context')
+  toSection(agent as PersonalisationRow | null, 'Agent-specific context')
+
+  return sections.join('\n\n')
+}
 
 export async function POST(req: NextRequest) {
   const supabase = await createClient()
@@ -52,12 +102,11 @@ export async function POST(req: NextRequest) {
         await writeLog(controller, 'info', `Agent ${agent_type} started${ticket_id ? ` — ${ticket_id}` : ''}`)
         await writeLog(controller, 'info', 'Launching Claude CLI…')
 
+        const systemPrompt = await buildSystemPrompt(agent_type)
         const result = await runClaude(
-          CLAUDE_BIN,
           prompt,
-          AGENT_SYSTEM_PROMPTS[agent_type],
+          systemPrompt,
           (chunk) => {
-            // Stream each text chunk as a live log line
             controller.enqueue(
               encoder.encode(`data: ${JSON.stringify({ type: 'chunk', text: chunk, run_id: run.id })}\n\n`)
             )
@@ -71,8 +120,35 @@ export async function POST(req: NextRequest) {
           .update({ status: 'done', output: result.output, tokens_used: result.tokensUsed })
           .eq('id', run.id)
 
+        // BA: parse output and persist ticket proposals
+        let ticketsCreated: string[] = []
+        if (agent_type === 'ba') {
+          const proposals = parseBaTickets(result.output)
+          if (proposals.length > 0) {
+            const service = createServiceClient()
+            const rows = proposals.map((t) => ({
+              id: t.id,
+              name: t.name,
+              description: t.description,
+              priority: t.priority,
+              assignee_agent: t.assignee_agent,
+              status: 'pending_approval',
+              created_by: user.id,
+            }))
+            const { data: created } = await service.from('tickets').insert(rows).select('id')
+            ticketsCreated = (created ?? []).map((r: { id: string }) => r.id)
+            await writeLog(controller, 'success', `${ticketsCreated.length} ticket(s) created and awaiting approval`)
+          }
+        }
+
         controller.enqueue(
-          encoder.encode(`data: ${JSON.stringify({ type: 'run_done', run_id: run.id, output: result.output, tokens_used: result.tokensUsed })}\n\n`)
+          encoder.encode(`data: ${JSON.stringify({
+            type: 'run_done',
+            run_id: run.id,
+            output: result.output,
+            tokens_used: result.tokensUsed,
+            tickets_created: ticketsCreated,
+          })}\n\n`)
         )
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Unknown error'
@@ -86,82 +162,5 @@ export async function POST(req: NextRequest) {
 
   return new Response(stream, {
     headers: { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache', Connection: 'keep-alive' },
-  })
-}
-
-interface ClaudeResult {
-  output: string
-  tokensUsed: number
-}
-
-function runClaude(
-  bin: string,
-  prompt: string,
-  systemPrompt: string,
-  onChunk: (text: string) => void,
-): Promise<ClaudeResult> {
-  return new Promise((resolve, reject) => {
-    const child = spawn(bin, [
-      '--print',
-      '--model', 'sonnet',
-      '--system-prompt', systemPrompt,
-      '--output-format', 'stream-json',
-      '--verbose',
-      '--no-session-persistence',
-    ], {
-      env: { ...process.env, TERM: 'dumb' },
-    })
-
-    child.stdin.write(prompt)
-    child.stdin.end()
-
-    let buffer = ''
-    let fullOutput = ''
-    let tokensUsed = 0
-
-    child.stdout.on('data', (raw: Buffer) => {
-      buffer += raw.toString()
-      const lines = buffer.split('\n')
-      buffer = lines.pop() ?? ''
-
-      for (const line of lines) {
-        if (!line.trim()) continue
-        try {
-          const event = JSON.parse(line) as Record<string, unknown>
-
-          if (event.type === 'assistant') {
-            const msg = event.message as { content?: Array<{ type: string; text?: string }> }
-            const text = msg.content?.find((c) => c.type === 'text')?.text ?? ''
-            if (text) {
-              fullOutput = text // assistant event carries the full text so far
-              onChunk(text)
-            }
-          }
-
-          if (event.type === 'result' && event.subtype === 'success') {
-            const usage = event.usage as { input_tokens?: number; output_tokens?: number } | undefined
-            tokensUsed = (usage?.input_tokens ?? 0) + (usage?.output_tokens ?? 0)
-            fullOutput = (event.result as string | undefined) ?? fullOutput
-          }
-        } catch {
-          // non-JSON line — ignore
-        }
-      }
-    })
-
-    child.stderr.on('data', (raw: Buffer) => {
-      // stderr is informational — not fatal
-      console.error('[claude-cli]', raw.toString().trim())
-    })
-
-    child.on('close', (code) => {
-      if (code !== 0 && !fullOutput) {
-        reject(new Error(`Claude CLI exited with code ${code}`))
-      } else {
-        resolve({ output: fullOutput, tokensUsed })
-      }
-    })
-
-    child.on('error', reject)
   })
 }

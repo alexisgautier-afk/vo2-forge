@@ -14,6 +14,13 @@ interface AgentMeta {
 
 const AGENTS: AgentMeta[] = [
   {
+    type: 'ba',
+    label: 'BA',
+    description: 'Challenges requirements, creates tickets',
+    icon: '◎',
+    color: 'text-[#F97316]',
+  },
+  {
     type: 'coding',
     label: 'Coding',
     description: 'Opens PRs, implements features',
@@ -30,7 +37,7 @@ const AGENTS: AgentMeta[] = [
   {
     type: 'pm',
     label: 'PM',
-    description: 'Breaks down tickets, prepares sprints',
+    description: 'Plans sprints, sequences tickets',
     icon: '◈',
     color: 'text-vo2-gold',
   },
@@ -47,7 +54,7 @@ export function AgentSelector() {
   const pathname = usePathname()
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
       {AGENTS.map(({ type, label, description, icon, color }) => {
         const active = pathname === `/agents/${type}`
         return (

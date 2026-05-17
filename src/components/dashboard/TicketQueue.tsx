@@ -8,10 +8,16 @@ import type { Ticket, TicketStatus } from '@/types'
 import type { BadgeVariant } from '@/components/ui/Badge'
 
 const statusConfig: Record<TicketStatus, { variant: BadgeVariant; label: string }> = {
-  ready: { variant: 'muted', label: 'ready' },
-  in_progress: { variant: 'default', label: 'in progress' },
-  review: { variant: 'warning', label: 'review' },
-  blocked: { variant: 'error', label: 'blocked' },
+  draft:            { variant: 'muted',   label: 'draft' },
+  pending_approval: { variant: 'warning', label: 'pending approval' },
+  approved:         { variant: 'info',    label: 'approved' },
+  rejected:         { variant: 'error',   label: 'rejected' },
+  planned:          { variant: 'default', label: 'planned' },
+  in_progress:      { variant: 'default', label: 'in progress' },
+  review:           { variant: 'warning', label: 'review' },
+  lead_review:      { variant: 'warning', label: 'lead review' },
+  ready_for_uat:    { variant: 'success', label: 'ready for UAT' },
+  ready_for_prod:   { variant: 'success', label: 'ready for prod' },
 }
 
 interface TicketQueueProps {

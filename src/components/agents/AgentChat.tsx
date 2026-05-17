@@ -1,7 +1,9 @@
 'use client'
 
 import { useState, useRef, useCallback } from 'react'
+import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
+import { Badge } from '@/components/ui/Badge'
 import { LogStream } from '@/components/agents/LogStream'
 import { SectionLabel } from '@/components/ui/SectionLabel'
 import type { AgentType } from '@/types'
@@ -11,6 +13,7 @@ interface AgentChatProps {
 }
 
 const PLACEHOLDER: Record<AgentType, string> = {
+  ba: 'e.g. We need a feature that lets store associates see a client\'s purchase history',
   coding: 'e.g. Implement the client list with pagination — SMCP-42',
   qa: 'e.g. Review PR #87 and generate test cases for the messaging flow',
   pm: 'e.g. Break down SMCP-51 into sub-tasks and estimate complexity',
@@ -18,6 +21,11 @@ const PLACEHOLDER: Record<AgentType, string> = {
 }
 
 const SUGGESTED: Record<AgentType, string[]> = {
+  ba: [
+    'Store associates need to send personalised messages to VIP clients',
+    'The app should surface product recommendations based on past purchases',
+    'We need a way to track client visit frequency per store',
+  ],
   coding: [
     'Create a ClientCard component with avatar, name, last visit',
     'Add a useClientSearch hook with 300ms debounce',
@@ -40,14 +48,45 @@ const SUGGESTED: Record<AgentType, string[]> = {
   ],
 }
 
+interface BaTicketProposal {
+  id: string
+  name: string
+  description: string
+  priority: 'low' | 'medium' | 'high' | 'critical'
+  assignee_agent: string
+}
+
+interface BaOutput {
+  analysis: string
+  tickets: BaTicketProposal[]
+}
+
 interface RunResult {
   runId: string
   output?: string
 }
 
+const PRIORITY_VARIANT: Record<string, string> = {
+  low: 'muted',
+  medium: 'info',
+  high: 'warning',
+  critical: 'error',
+}
+
+function parseBaOutput(raw: string): BaOutput | null {
+  try {
+    const match = raw.match(/\{[\s\S]*\}/)
+    if (!match) return null
+    const parsed = JSON.parse(match[0]) as BaOutput
+    if (!parsed.analysis || !Array.isArray(parsed.tickets)) return null
+    return parsed
+  } catch {
+    return null
+  }
+}
+
 export function AgentChat({ agentType }: AgentChatProps) {
   const [prompt, setPrompt] = useState('')
-  const [ticketId, setTicketId] = useState('')
   const [run, setRun] = useState<RunResult | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -68,7 +107,6 @@ export function AgentChat({ agentType }: AgentChatProps) {
         body: JSON.stringify({
           agent_type: agentType,
           prompt: prompt.trim(),
-          ticket_id: ticketId.trim() || undefined,
         }),
       })
 
@@ -76,7 +114,6 @@ export function AgentChat({ agentType }: AgentChatProps) {
         throw new Error(`Server error: ${res.status}`)
       }
 
-      // Read the first SSE event to get the run_id, then hand off to LogStream
       const reader = res.body.getReader()
       const decoder = new TextDecoder()
       let runId: string | null = null
@@ -101,7 +138,7 @@ export function AgentChat({ agentType }: AgentChatProps) {
       setError(err instanceof Error ? err.message : 'Unknown error')
       setLoading(false)
     }
-  }, [prompt, ticketId, agentType, loading])
+  }, [prompt, agentType, loading])
 
   const handleDone = useCallback((out?: string) => {
     setLoading(false)
@@ -118,46 +155,30 @@ export function AgentChat({ agentType }: AgentChatProps) {
     setOutput(null)
     setError(null)
     setPrompt('')
-    setTicketId('')
     setTimeout(() => textareaRef.current?.focus(), 50)
   }, [])
 
+  const baOutput = agentType === 'ba' && output ? parseBaOutput(output) : null
+
   return (
     <div className="space-y-5">
-      {/* Input form — hidden once running */}
       {!run && (
         <div className="card space-y-4">
-          <div className="flex gap-3">
-            {/* Ticket ID */}
-            <div className="w-36 flex-shrink-0">
-              <SectionLabel className="mb-1.5">Ticket (optional)</SectionLabel>
-              <input
-                type="text"
-                value={ticketId}
-                onChange={(e) => setTicketId(e.target.value)}
-                placeholder="SMCP-42"
-                className="w-full h-9 px-3 text-sm rounded-lg border border-border bg-surface text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-blue-vo2/40 focus:border-blue-vo2 transition-colors"
-              />
-            </div>
-
-            {/* Prompt */}
-            <div className="flex-1">
-              <SectionLabel className="mb-1.5">Prompt</SectionLabel>
-              <textarea
-                ref={textareaRef}
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) handleSubmit()
-                }}
-                placeholder={PLACEHOLDER[agentType]}
-                rows={3}
-                className="w-full px-3 py-2 text-sm rounded-lg border border-border bg-surface text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-blue-vo2/40 focus:border-blue-vo2 transition-colors resize-none"
-              />
-            </div>
+          <div>
+            <SectionLabel className="mb-1.5">Prompt</SectionLabel>
+            <textarea
+              ref={textareaRef}
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) handleSubmit()
+              }}
+              placeholder={PLACEHOLDER[agentType]}
+              rows={4}
+              className="w-full px-3 py-2 text-sm rounded-lg border border-border bg-surface text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-blue-vo2/40 focus:border-blue-vo2 transition-colors resize-none"
+            />
           </div>
 
-          {/* Suggested prompts */}
           <div>
             <SectionLabel className="mb-2">Suggested prompts</SectionLabel>
             <div className="flex flex-wrap gap-2">
@@ -175,11 +196,7 @@ export function AgentChat({ agentType }: AgentChatProps) {
 
           <div className="flex items-center justify-between">
             <p className="text-xs text-text-muted">⌘ + Enter to run</p>
-            <Button
-              onClick={handleSubmit}
-              loading={loading}
-              disabled={!prompt.trim()}
-            >
+            <Button onClick={handleSubmit} loading={loading} disabled={!prompt.trim()}>
               Run agent
             </Button>
           </div>
@@ -192,17 +209,44 @@ export function AgentChat({ agentType }: AgentChatProps) {
         </div>
       )}
 
-      {/* Log stream */}
       {run && (
         <div className="space-y-4">
-          <LogStream
-            runId={run.runId}
-            onDone={handleDone}
-            onError={handleError}
-          />
+          <LogStream runId={run.runId} onDone={handleDone} onError={handleError} />
 
-          {/* Output */}
-          {output && (
+          {/* BA structured output */}
+          {baOutput && (
+            <div className="card space-y-4">
+              <SectionLabel>Analysis</SectionLabel>
+              <p className="text-sm text-text-secondary leading-relaxed">{baOutput.analysis}</p>
+
+              <SectionLabel>Ticket proposals — {baOutput.tickets.length} ticket{baOutput.tickets.length !== 1 ? 's' : ''}</SectionLabel>
+              <ul className="space-y-2">
+                {baOutput.tickets.map((t) => (
+                  <li key={t.id} className="border border-border rounded-lg px-4 py-3 space-y-1">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="label-mono text-text-muted">{t.id}</span>
+                      <Badge variant={PRIORITY_VARIANT[t.priority] as never}>{t.priority}</Badge>
+                      <Badge variant="muted">{t.assignee_agent}</Badge>
+                    </div>
+                    <p className="text-sm font-medium text-text-primary">{t.name}</p>
+                    <p className="text-xs text-text-secondary">{t.description}</p>
+                  </li>
+                ))}
+              </ul>
+
+              <div className="flex items-center gap-3 pt-1">
+                <Link
+                  href="/tickets?filter=pending_approval"
+                  className="text-xs font-medium text-blue-vo2 hover:underline"
+                >
+                  Review and approve on the Tickets page →
+                </Link>
+              </div>
+            </div>
+          )}
+
+          {/* Generic output for non-BA agents */}
+          {!baOutput && output && (
             <div className="card space-y-3">
               <SectionLabel>Agent output</SectionLabel>
               <pre className="text-xs text-text-secondary whitespace-pre-wrap leading-relaxed font-mono overflow-x-auto">
@@ -217,17 +261,13 @@ export function AgentChat({ agentType }: AgentChatProps) {
             </p>
           )}
 
-          {/* Actions */}
           {!loading && (
             <div className="flex gap-2">
               <Button variant="secondary" onClick={handleReset}>
                 New run
               </Button>
-              {output && (
-                <Button
-                  variant="ghost"
-                  onClick={() => navigator.clipboard.writeText(output)}
-                >
+              {output && !baOutput && (
+                <Button variant="ghost" onClick={() => navigator.clipboard.writeText(output)}>
                   Copy output
                 </Button>
               )}

@@ -9,7 +9,7 @@ import type { AgentRun, AgentType, AgentStatus } from '@/types'
 import type { BadgeVariant } from '@/components/ui/Badge'
 
 const agentLabels: Record<AgentType, string> = {
-  coding: 'Coding', qa: 'QA', pm: 'PM', specs: 'Specs',
+  ba: 'BA', coding: 'Coding', qa: 'QA', pm: 'PM', specs: 'Specs',
 }
 
 const statusConfig: Record<AgentStatus, { variant: BadgeVariant; label: string }> = {
@@ -21,6 +21,7 @@ const statusConfig: Record<AgentStatus, { variant: BadgeVariant; label: string }
 
 const TYPE_FILTERS: { value: AgentType | 'all'; label: string }[] = [
   { value: 'all', label: 'All' },
+  { value: 'ba', label: 'BA' },
   { value: 'coding', label: 'Coding' },
   { value: 'qa', label: 'QA' },
   { value: 'pm', label: 'PM' },

@@ -1,6 +1,16 @@
-export type AgentType = 'coding' | 'qa' | 'pm' | 'specs'
+export type AgentType = 'coding' | 'qa' | 'pm' | 'specs' | 'ba'
 export type AgentStatus = 'pending' | 'running' | 'done' | 'error'
-export type TicketStatus = 'ready' | 'in_progress' | 'review' | 'blocked'
+export type TicketStatus =
+  | 'draft'
+  | 'pending_approval'
+  | 'approved'
+  | 'rejected'
+  | 'planned'
+  | 'in_progress'
+  | 'review'
+  | 'lead_review'
+  | 'ready_for_uat'
+  | 'ready_for_prod'
 export type EnvName = 'dev' | 'uat' | 'prod'
 export type GateStatus = 'validated' | 'pending' | 'locked'
 export type LogLevel = 'info' | 'warn' | 'error' | 'success'
@@ -36,7 +46,9 @@ export interface Ticket {
   status: TicketStatus
   priority: 'low' | 'medium' | 'high' | 'critical'
   assignee?: string
+  assignee_agent?: AgentType
   sprint?: string
+  rejection_comment?: string
   updated_at: string
   created_at: string
   created_by?: string

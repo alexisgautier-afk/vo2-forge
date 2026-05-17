@@ -13,7 +13,7 @@ export const SMCP_MILESTONES: Milestone[] = [
 ]
 
 export const ENVIRONMENTS: Environment[] = [
-  { name: 'dev', branch: 'develop', last_deploy: '', agents_allowed: ['coding', 'qa', 'pm', 'specs'], status: 'healthy', frozen: false },
+  { name: 'dev', branch: 'develop', last_deploy: '', agents_allowed: ['coding', 'qa', 'pm', 'specs', 'ba'], status: 'healthy', frozen: false },
   { name: 'uat', branch: 'release/uat', last_deploy: '', agents_allowed: ['qa'], status: 'healthy', frozen: false },
   { name: 'prod', branch: 'main', last_deploy: '', agents_allowed: [], status: 'healthy', frozen: isProductionFrozen() },
 ]

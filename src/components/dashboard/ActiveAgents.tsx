@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/Badge'
 import type { AgentRun, AgentType } from '@/types'
 
 const agentLabels: Record<AgentType, string> = {
+  ba: 'BA',
   coding: 'Coding',
   qa: 'QA',
   pm: 'PM',

@@ -3,7 +3,7 @@ import { Badge } from '@/components/ui/Badge'
 import type { Environment, AgentType } from '@/types'
 
 const agentLabels: Record<AgentType, string> = {
-  coding: 'Coding', qa: 'QA', pm: 'PM', specs: 'Specs',
+  ba: 'BA', coding: 'Coding', qa: 'QA', pm: 'PM', specs: 'Specs',
 }
 
 const envLabels: Record<string, string> = {
