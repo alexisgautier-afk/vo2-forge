@@ -75,32 +75,28 @@ export default async function AgentPage({ params, searchParams }: AgentPageProps
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  return (
-    <AppShell userEmail={user?.email}>
-      <div className="flex flex-col gap-4 h-full">
-        {/* Header */}
-        <div className="flex items-center justify-between gap-4 flex-shrink-0">
-          <div>
-            <SectionLabel className="mb-0.5">Active agent</SectionLabel>
-            <h2 className="text-xl font-semibold font-jost text-text-primary">{meta.label}</h2>
-          </div>
-          <div className="flex items-center gap-4">
-            <ul className="hidden lg:flex gap-x-4 gap-y-1 flex-wrap">
-              {meta.rules.map((rule) => (
-                <li key={rule} className="flex gap-1.5 text-xs text-text-secondary">
-                  <span className="text-blue-vo2 flex-shrink-0">·</span>
-                  {rule}
-                </li>
-              ))}
-            </ul>
-            <AgentTabs agentType={agentType} active={activeTab} />
-          </div>
-        </div>
-
-        {/* Content */}
-        {activeTab === 'chat' && <AgentChat agentType={agentType} />}
-        {activeTab === 'personalisation' && <AgentPersonalisation agentType={agentType} />}
+  const header = (
+    <div className="flex items-center justify-between gap-6 flex-1 min-w-0">
+      <div className="shrink-0">
+        <SectionLabel className="mb-0.5">Active agent</SectionLabel>
+        <h1 className="text-base font-semibold font-jost text-text-primary leading-tight">{meta.label}</h1>
       </div>
+      <ul className="hidden lg:flex gap-x-5 gap-y-1 flex-wrap flex-1 min-w-0">
+        {meta.rules.map((rule) => (
+          <li key={rule} className="flex gap-1.5 text-xs text-text-secondary whitespace-nowrap">
+            <span className="text-blue-vo2 flex-shrink-0">·</span>
+            {rule}
+          </li>
+        ))}
+      </ul>
+      <AgentTabs agentType={agentType} active={activeTab} />
+    </div>
+  )
+
+  return (
+    <AppShell userEmail={user?.email} header={header}>
+      {activeTab === 'chat' && <AgentChat agentType={agentType} />}
+      {activeTab === 'personalisation' && <AgentPersonalisation agentType={agentType} />}
     </AppShell>
   )
 }
