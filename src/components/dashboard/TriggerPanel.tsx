@@ -23,7 +23,7 @@ export function TriggerPanel() {
 
   return (
     <div className="card space-y-3">
-      <SectionLabel>Lancer un agent</SectionLabel>
+      <SectionLabel>Launch an agent</SectionLabel>
       <div className="grid grid-cols-2 gap-2">
         {agents.map(({ type, label, icon, colorClass }) => (
           <button

@@ -6,9 +6,9 @@ interface GateListProps {
 }
 
 const gateStatusLabel: Record<string, string> = {
-  validated: 'Validé',
-  pending: 'En attente',
-  locked: 'Verrouillé',
+  validated: 'Validated',
+  pending: 'Pending',
+  locked: 'Locked',
 }
 
 export function GateList({ gates }: GateListProps) {

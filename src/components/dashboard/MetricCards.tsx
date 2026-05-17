@@ -30,26 +30,10 @@ function MetricCard({ label, value, sub }: MetricCardProps) {
 export function MetricCards({ activeAgents, runsToday, openTickets }: MetricCardsProps) {
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-      <MetricCard
-        label="Agents actifs"
-        value={activeAgents}
-        sub="en ce moment"
-      />
-      <MetricCard
-        label="Runs aujourd'hui"
-        value={runsToday}
-        sub="total"
-      />
-      <MetricCard
-        label="Tickets ouverts"
-        value={openTickets}
-        sub="sprint en cours"
-      />
-      <MetricCard
-        label="Go-live V1"
-        value={daysUntilGoLive()}
-        sub="jours restants"
-      />
+      <MetricCard label="Active agents" value={activeAgents} sub="right now" />
+      <MetricCard label="Runs today" value={runsToday} sub="total" />
+      <MetricCard label="Open tickets" value={openTickets} sub="current sprint" />
+      <MetricCard label="Go-live V1" value={daysUntilGoLive()} sub="days remaining" />
     </div>
   )
 }

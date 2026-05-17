@@ -13,14 +13,14 @@ const agentLabels: Record<AgentType, string> = {
 }
 
 const statusConfig: Record<AgentStatus, { variant: BadgeVariant; label: string }> = {
-  pending: { variant: 'muted', label: 'En attente' },
-  running: { variant: 'default', label: 'En cours' },
-  done: { variant: 'success', label: 'Terminé' },
-  error: { variant: 'error', label: 'Erreur' },
+  pending: { variant: 'muted', label: 'Pending' },
+  running: { variant: 'default', label: 'Running' },
+  done: { variant: 'success', label: 'Done' },
+  error: { variant: 'error', label: 'Error' },
 }
 
 const TYPE_FILTERS: { value: AgentType | 'all'; label: string }[] = [
-  { value: 'all', label: 'Tous' },
+  { value: 'all', label: 'All' },
   { value: 'coding', label: 'Coding' },
   { value: 'qa', label: 'QA' },
   { value: 'pm', label: 'PM' },
@@ -65,7 +65,7 @@ export function RunList({ initialRuns }: RunListProps) {
 
       {visible.length === 0 ? (
         <div className="card py-12 text-center">
-          <p className="text-text-muted text-sm">Aucun run trouvé.</p>
+          <p className="text-text-muted text-sm">No runs found.</p>
         </div>
       ) : (
         <div className="space-y-2">
@@ -92,7 +92,7 @@ export function RunList({ initialRuns }: RunListProps) {
                     </p>
                     <div className="flex items-center gap-3 mt-1">
                       <p className="text-xs text-text-muted">
-                        {new Date(run.created_at).toLocaleDateString('fr-FR', {
+                        {new Date(run.created_at).toLocaleDateString('en-US', {
                           day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit',
                         })}
                       </p>
@@ -108,7 +108,7 @@ export function RunList({ initialRuns }: RunListProps) {
                         onClick={(e) => e.stopPropagation()}
                         className="text-xs text-blue-vo2 hover:underline"
                       >
-                        Voir →
+                        View →
                       </Link>
                     )}
                     <span className="text-text-muted text-xs">{isExpanded ? '▲' : '▼'}</span>
@@ -124,10 +124,10 @@ export function RunList({ initialRuns }: RunListProps) {
                         {run.output}
                       </pre>
                     ) : (
-                      <p className="text-xs text-text-muted">Aucune sortie disponible.</p>
+                      <p className="text-xs text-text-muted">No output available.</p>
                     )}
                     <div className="mt-2">
-                      <SectionLabel>ID run</SectionLabel>
+                      <SectionLabel>Run ID</SectionLabel>
                       <p className="text-xs font-mono text-text-muted mt-0.5">{run.id}</p>
                     </div>
                   </div>

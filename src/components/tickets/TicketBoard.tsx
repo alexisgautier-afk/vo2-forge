@@ -10,25 +10,25 @@ import type { Ticket, TicketStatus, TicketPriority } from '@/types'
 import type { BadgeVariant } from '@/components/ui/Badge'
 
 const statusConfig: Record<TicketStatus, { variant: BadgeVariant; label: string }> = {
-  ready: { variant: 'muted', label: 'Prêt' },
-  in_progress: { variant: 'default', label: 'En cours' },
+  ready: { variant: 'muted', label: 'Ready' },
+  in_progress: { variant: 'default', label: 'In progress' },
   review: { variant: 'warning', label: 'Review' },
-  blocked: { variant: 'error', label: 'Bloqué' },
+  blocked: { variant: 'error', label: 'Blocked' },
 }
 
 const priorityConfig: Record<TicketPriority, { variant: BadgeVariant; label: string }> = {
-  low: { variant: 'muted', label: 'Basse' },
-  medium: { variant: 'info', label: 'Moyenne' },
-  high: { variant: 'warning', label: 'Haute' },
-  critical: { variant: 'error', label: 'Critique' },
+  low: { variant: 'muted', label: 'Low' },
+  medium: { variant: 'info', label: 'Medium' },
+  high: { variant: 'warning', label: 'High' },
+  critical: { variant: 'error', label: 'Critical' },
 }
 
 const STATUS_FILTERS: { value: TicketStatus | 'all'; label: string }[] = [
-  { value: 'all', label: 'Tous' },
-  { value: 'ready', label: 'Prêt' },
-  { value: 'in_progress', label: 'En cours' },
+  { value: 'all', label: 'All' },
+  { value: 'ready', label: 'Ready' },
+  { value: 'in_progress', label: 'In progress' },
   { value: 'review', label: 'Review' },
-  { value: 'blocked', label: 'Bloqué' },
+  { value: 'blocked', label: 'Blocked' },
 ]
 
 interface TicketBoardProps {
@@ -77,7 +77,7 @@ export function TicketBoard({ initialTickets }: TicketBoardProps) {
           ))}
         </div>
         <Button size="sm" onClick={() => { setShowForm(true); setEditing(null) }}>
-          + Nouveau ticket
+          + New ticket
         </Button>
       </div>
 
@@ -88,7 +88,7 @@ export function TicketBoard({ initialTickets }: TicketBoardProps) {
       {visible.length === 0 && !showForm ? (
         <div className="card py-12 text-center">
           <p className="text-text-muted text-sm">
-            {filter === 'all' ? 'Aucun ticket pour ce sprint.' : `Aucun ticket avec le statut "${statusConfig[filter as TicketStatus]?.label}".`}
+            {filter === 'all' ? 'No tickets this sprint.' : `No tickets with status "${statusConfig[filter as TicketStatus]?.label}".`}
           </p>
         </div>
       ) : (
@@ -122,7 +122,7 @@ export function TicketBoard({ initialTickets }: TicketBoardProps) {
                   </div>
                   <div className="flex gap-1 shrink-0">
                     <Button size="sm" variant="ghost" onClick={() => setEditing(ticket)}>
-                      Éditer
+                      Edit
                     </Button>
                     <Button
                       size="sm"
@@ -141,7 +141,7 @@ export function TicketBoard({ initialTickets }: TicketBoardProps) {
       )}
 
       <div className="pt-1">
-        <SectionLabel>{visible.length} ticket{visible.length !== 1 ? 's' : ''}</SectionLabel>
+        <SectionLabel>{visible.length} ticket{visible.length !== 1 ? 's' : ''} total</SectionLabel>
       </div>
     </div>
   )

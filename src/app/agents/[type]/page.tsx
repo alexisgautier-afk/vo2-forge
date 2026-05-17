@@ -13,37 +13,37 @@ const AGENT_META: Record<AgentType, { label: string; rules: string[] }> = {
   coding: {
     label: 'Coding Agent',
     rules: [
-      'Ouvre une PR — ne merge jamais directement',
-      'TypeScript strict, aucun any',
-      'React Query pour tous les appels API',
-      'Branches : feature/smcp-{id}-{slug}',
+      'Opens a PR — never merges directly',
+      'Strict TypeScript, no any',
+      'React Query for all API calls',
+      'Branches: feature/smcp-{id}-{slug}',
     ],
   },
   qa: {
     label: 'QA Agent',
     rules: [
-      'Commente les PRs, ne merge pas',
-      'En UAT : lecture seule uniquement',
-      'Happy path + edge cases systématiquement',
-      'Priorité aux flows critiques E2E',
+      'Comments on PRs, never merges',
+      'In UAT: read-only access only',
+      'Happy path + edge cases systematically',
+      'Priority on critical E2E flows',
     ],
   },
   pm: {
     label: 'PM Agent',
     rules: [
-      'Propose des découpages en sous-tâches',
-      'Identifie risques et dépendances',
-      'Respecte les jalons critiques du projet',
-      'Produit des synthèses pour SMCP',
+      'Proposes breakdowns into sub-tasks',
+      'Identifies risks and dependencies',
+      'Respects critical project milestones',
+      'Produces summaries for SMCP',
     ],
   },
   specs: {
     label: 'Specs Agent',
     rules: [
-      'Specs techniques à partir des besoins métier',
-      'Diagrammes de séquence en Mermaid',
-      "Valide la cohérence avec la stack cible",
-      "Documente les choix d'architecture",
+      'Technical specs from business requirements',
+      'Sequence diagrams in Mermaid',
+      'Validates consistency with the target stack',
+      'Documents architecture decisions',
     ],
   },
 }
@@ -79,7 +79,7 @@ export default async function AgentPage({ params }: AgentPageProps) {
           {/* Chat — left 2/3 */}
           <div className="lg:col-span-2 space-y-4">
             <div>
-              <SectionLabel className="mb-0.5">Agent actif</SectionLabel>
+              <SectionLabel className="mb-0.5">Active agent</SectionLabel>
               <h2 className="text-xl font-semibold font-jost text-text-primary">{meta.label}</h2>
             </div>
             <AgentChat agentType={agentType} />
@@ -88,7 +88,7 @@ export default async function AgentPage({ params }: AgentPageProps) {
           {/* Right sidebar */}
           <div className="space-y-4">
             <div className="card space-y-3">
-              <SectionLabel>Règles absolues</SectionLabel>
+              <SectionLabel>Rules</SectionLabel>
               <ul className="space-y-2">
                 {meta.rules.map((rule) => (
                   <li key={rule} className="flex gap-2 text-xs text-text-secondary">
@@ -100,9 +100,9 @@ export default async function AgentPage({ params }: AgentPageProps) {
             </div>
 
             <div className="card space-y-3">
-              <SectionLabel>Runs récents</SectionLabel>
+              <SectionLabel>Recent runs</SectionLabel>
               {!recentRuns?.length ? (
-                <p className="text-xs text-text-muted">Aucun run pour cet agent.</p>
+                <p className="text-xs text-text-muted">No runs for this agent.</p>
               ) : (
                 <ul className="space-y-2">
                   {recentRuns.map((run) => (
@@ -124,7 +124,7 @@ export default async function AgentPage({ params }: AgentPageProps) {
                         </p>
                         <p className="text-xs text-text-muted">
                           {run.tokens_used ? `${run.tokens_used} tokens · ` : ''}
-                          {new Date(run.created_at).toLocaleDateString('fr-FR', {
+                          {new Date(run.created_at).toLocaleDateString('en-US', {
                             day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit',
                           })}
                         </p>

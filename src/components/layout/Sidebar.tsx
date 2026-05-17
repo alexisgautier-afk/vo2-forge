@@ -29,7 +29,7 @@ export function Sidebar() {
       {/* Nav */}
       <nav className="flex-1 px-3 py-4 flex flex-col gap-0.5 overflow-y-auto">
         <p className="label-mono px-2 mb-2" style={{ color: 'rgba(255,255,255,0.35)' }}>
-          Navigation
+          nav
         </p>
         {NAV_ITEMS.map(({ href, label, icon }) => {
           const active = pathname === href || (href !== '/dashboard' && pathname.startsWith(href))
@@ -53,9 +53,9 @@ export function Sidebar() {
 
       {/* Sprint badge */}
       <div className="px-5 py-4 border-t border-white/10">
-        <p className="label-mono mb-1" style={{ color: 'rgba(255,255,255,0.35)' }}>Sprint en cours</p>
+        <p className="label-mono mb-1" style={{ color: 'rgba(255,255,255,0.35)' }}>Current sprint</p>
         <p className="text-white/80 text-xs font-medium">Sprint 12</p>
-        <p className="text-white/40 text-xs">12 – 26 mai 2026</p>
+        <p className="text-white/40 text-xs">May 12 – 26, 2026</p>
       </div>
     </aside>
   )

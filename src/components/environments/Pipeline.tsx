@@ -7,7 +7,7 @@ interface PipelineProps {
 export function Pipeline({ milestones }: PipelineProps) {
   return (
     <div className="card space-y-4">
-      <p className="label-mono">Jalons projet</p>
+      <p className="label-mono">Project milestones</p>
       <div className="space-y-3">
         {milestones.map((m) => {
           const date = new Date(m.date)
@@ -36,14 +36,14 @@ export function Pipeline({ milestones }: PipelineProps) {
                     : 'text-text-muted'
                   }`}>
                     {isPast
-                      ? 'Passé'
-                      : daysLeft === 0 ? "Aujourd'hui"
-                      : `J−${daysLeft}`}
+                      ? 'Past'
+                      : daysLeft === 0 ? 'Today'
+                      : `D−${daysLeft}`}
                   </p>
                 </div>
                 <p className="text-xs text-text-muted mt-0.5">{m.description}</p>
                 <p className="text-xs text-text-muted font-mono mt-0.5">
-                  {date.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })}
+                  {date.toLocaleDateString('en-US', { day: '2-digit', month: 'long', year: 'numeric' })}
                 </p>
               </div>
             </div>

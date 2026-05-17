@@ -14,14 +14,14 @@ export default async function EnvironmentsPage() {
     <AppShell userEmail={user?.email}>
       <div className="space-y-8">
         <div>
-          <h2 className="text-xl font-semibold text-text-primary font-jost">Environnements</h2>
+          <h2 className="text-xl font-semibold text-text-primary font-jost">Environments</h2>
           <p className="text-sm text-text-muted mt-0.5">
-            Pipeline de déploiement — Dev → UAT → Production
+            Deployment pipeline — Dev → UAT → Production
           </p>
         </div>
 
         <section className="space-y-3">
-          <SectionLabel>Environnements actifs</SectionLabel>
+          <SectionLabel>Active environments</SectionLabel>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             {ENVIRONMENTS.map((env) => (
               <EnvCard key={env.name} env={env} />
@@ -31,12 +31,12 @@ export default async function EnvironmentsPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <section className="space-y-3">
-            <SectionLabel>Pipeline de validation</SectionLabel>
+            <SectionLabel>Validation pipeline</SectionLabel>
             <GateList gates={PIPELINE_GATES} />
           </section>
 
           <section className="space-y-3">
-            <SectionLabel>Jalons critiques</SectionLabel>
+            <SectionLabel>Critical milestones</SectionLabel>
             <Pipeline milestones={SMCP_MILESTONES} />
           </section>
         </div>

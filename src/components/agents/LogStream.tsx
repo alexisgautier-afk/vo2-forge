@@ -103,7 +103,7 @@ export function LogStream({ runId, onDone, onError }: LogStreamProps) {
       {/* Log lines */}
       <div className="font-mono text-xs p-4 space-y-1 min-h-32 max-h-96 overflow-y-auto">
         {lines.length === 0 && !streamingText && !done && (
-          <p className="text-white/30 animate-pulse">Initialisation…</p>
+          <p className="text-white/30 animate-pulse">Initializing…</p>
         )}
 
         {/* Status log lines */}
@@ -118,12 +118,12 @@ export function LogStream({ runId, onDone, onError }: LogStreamProps) {
         {/* Live streaming output from claude CLI */}
         {streamingText && (
           <div className="mt-2 pt-2 border-t border-white/10">
-            <p className="text-white/30 text-[10px] uppercase tracking-widest mb-2 select-none">sortie en cours</p>
+            <p className="text-white/30 text-[10px] uppercase tracking-widest mb-2 select-none">streaming output</p>
             <pre className="text-white/70 whitespace-pre-wrap leading-relaxed">{streamingText}</pre>
           </div>
         )}
 
-        {done && <p className="text-white/20 mt-2 select-none">── fin ──</p>}
+        {done && <p className="text-white/20 mt-2 select-none">── done ──</p>}
         <div ref={bottomRef} />
       </div>
     </div>

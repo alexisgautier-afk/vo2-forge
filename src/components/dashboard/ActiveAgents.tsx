@@ -57,11 +57,11 @@ export function ActiveAgents({ initialRuns }: ActiveAgentsProps) {
 
   return (
     <div className="card space-y-3">
-      <SectionLabel>Agents actifs</SectionLabel>
+      <SectionLabel>Active agents</SectionLabel>
 
       {runs.length === 0 ? (
         <p className="text-sm text-text-muted py-4 text-center">
-          Aucun agent en cours d'exécution
+          No agents running
         </p>
       ) : (
         <ul className="space-y-2">

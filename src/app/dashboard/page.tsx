@@ -11,8 +11,8 @@ function formatSprintRange(start: string, end: string): string {
   const s = new Date(start)
   const e = new Date(end)
   const fmt = (d: Date) =>
-    d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })
-  return `${fmt(s)} – ${fmt(e)} ${e.getFullYear()}`
+    d.toLocaleDateString('en-US', { day: 'numeric', month: 'long' })
+  return `${fmt(s)} – ${fmt(e)}, ${e.getFullYear()}`
 }
 
 export default async function DashboardPage() {

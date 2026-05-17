@@ -8,10 +8,10 @@ import type { Ticket, TicketStatus } from '@/types'
 import type { BadgeVariant } from '@/components/ui/Badge'
 
 const statusConfig: Record<TicketStatus, { variant: BadgeVariant; label: string }> = {
-  ready: { variant: 'muted', label: 'prêt' },
-  in_progress: { variant: 'default', label: 'en cours' },
+  ready: { variant: 'muted', label: 'ready' },
+  in_progress: { variant: 'default', label: 'in progress' },
   review: { variant: 'warning', label: 'review' },
-  blocked: { variant: 'error', label: 'bloqué' },
+  blocked: { variant: 'error', label: 'blocked' },
 }
 
 interface TicketQueueProps {
@@ -28,18 +28,18 @@ export function TicketQueue({ initialTickets }: TicketQueueProps) {
   return (
     <div className="card space-y-3">
       <div className="flex items-center justify-between">
-        <SectionLabel>Tickets récents</SectionLabel>
+        <SectionLabel>Recent tickets</SectionLabel>
         <Link
           href="/tickets"
           className="text-xs text-blue-vo2 hover:underline font-dm-sans"
         >
-          Voir tous les tickets →
+          View all tickets →
         </Link>
       </div>
 
       {tickets.length === 0 ? (
         <p className="text-sm text-text-muted py-4 text-center">
-          Aucun ticket pour ce sprint
+          No tickets this sprint
         </p>
       ) : (
         <ul className="divide-y divide-border">

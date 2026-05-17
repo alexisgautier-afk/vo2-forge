@@ -60,11 +60,11 @@ export function SignoffBoard({ initialRequests }: SignoffBoardProps) {
   return (
     <div className="space-y-8">
       <section className="space-y-4">
-        <SectionLabel>En attente de validation ({pending.length})</SectionLabel>
+        <SectionLabel>Awaiting sign-off ({pending.length})</SectionLabel>
 
         {pending.length === 0 ? (
           <div className="card py-10 text-center">
-            <p className="text-text-muted text-sm">Aucune demande en attente.</p>
+            <p className="text-text-muted text-sm">No pending requests.</p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -82,7 +82,7 @@ export function SignoffBoard({ initialRequests }: SignoffBoardProps) {
                     </div>
                     <p className="text-sm text-text-secondary leading-relaxed">{req.description}</p>
                     <p className="text-xs text-text-muted mt-2">
-                      Soumis le {new Date(req.created_at).toLocaleDateString('fr-FR', {
+                      Submitted {new Date(req.created_at).toLocaleDateString('en-US', {
                         day: '2-digit', month: 'long', year: 'numeric',
                       })}
                     </p>
@@ -93,14 +93,14 @@ export function SignoffBoard({ initialRequests }: SignoffBoardProps) {
                         size="sm"
                         onClick={() => setReviewing({ id: req.id, decision: 'approved' })}
                       >
-                        Approuver
+                        Approve
                       </Button>
                       <Button
                         size="sm"
                         variant="danger"
                         onClick={() => setReviewing({ id: req.id, decision: 'rejected' })}
                       >
-                        Rejeter
+                        Reject
                       </Button>
                     </div>
                   )}
@@ -109,11 +109,11 @@ export function SignoffBoard({ initialRequests }: SignoffBoardProps) {
                 {reviewing?.id === req.id && (
                   <form onSubmit={handleReview} className="border-t border-border pt-4 space-y-3">
                     <p className={`text-sm font-medium ${reviewing.decision === 'approved' ? 'text-vo2-green' : 'text-[#DC2626]'}`}>
-                      {reviewing.decision === 'approved' ? '✓ Approbation' : '✕ Rejet'} — renseignez votre nom
+                      {reviewing.decision === 'approved' ? '✓ Approval' : '✕ Rejection'} — enter your name
                     </p>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="label-mono block mb-1.5">Votre nom *</label>
+                        <label className="label-mono block mb-1.5">Your name *</label>
                         <input
                           value={reviewerName}
                           onChange={(e) => setReviewerName(e.target.value)}
@@ -123,11 +123,11 @@ export function SignoffBoard({ initialRequests }: SignoffBoardProps) {
                         />
                       </div>
                       <div>
-                        <label className="label-mono block mb-1.5">Commentaire</label>
+                        <label className="label-mono block mb-1.5">Comment</label>
                         <input
                           value={comment}
                           onChange={(e) => setComment(e.target.value)}
-                          placeholder="Optionnel"
+                          placeholder="Optional"
                           className={inputCls}
                         />
                       </div>
@@ -136,10 +136,10 @@ export function SignoffBoard({ initialRequests }: SignoffBoardProps) {
                       <Button type="submit" size="sm" loading={submitting}
                         variant={reviewing.decision === 'approved' ? 'primary' : 'danger'}
                       >
-                        Confirmer
+                        Confirm
                       </Button>
                       <Button type="button" size="sm" variant="ghost" onClick={() => setReviewing(null)}>
-                        Annuler
+                        Cancel
                       </Button>
                     </div>
                   </form>
@@ -152,7 +152,7 @@ export function SignoffBoard({ initialRequests }: SignoffBoardProps) {
 
       {completed.length > 0 && (
         <section className="space-y-3">
-          <SectionLabel>Historique ({completed.length})</SectionLabel>
+          <SectionLabel>History ({completed.length})</SectionLabel>
           <div className="space-y-2">
             {completed.map((req) => (
               <div key={req.id} className="card flex items-start gap-4">
@@ -161,15 +161,15 @@ export function SignoffBoard({ initialRequests }: SignoffBoardProps) {
                     <p className="text-sm font-medium text-text-primary">{req.feature_name}</p>
                     {req.ticket_id && <span className="label-mono text-text-muted">{req.ticket_id}</span>}
                     <Badge variant={req.status === 'approved' ? 'success' : 'error'}>
-                      {req.status === 'approved' ? 'Approuvé' : 'Rejeté'}
+                      {req.status === 'approved' ? 'Approved' : 'Rejected'}
                     </Badge>
                   </div>
                   {req.comment && (
                     <p className="text-xs text-text-secondary mt-1">« {req.comment} »</p>
                   )}
                   <p className="text-xs text-text-muted mt-1">
-                    {req.reviewed_by && `Par ${req.reviewed_by} · `}
-                    {req.reviewed_at && new Date(req.reviewed_at).toLocaleDateString('fr-FR', {
+                    {req.reviewed_by && `By ${req.reviewed_by} · `}
+                    {req.reviewed_at && new Date(req.reviewed_at).toLocaleDateString('en-US', {
                       day: '2-digit', month: 'short', year: 'numeric',
                     })}
                   </p>

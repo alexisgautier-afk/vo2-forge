@@ -7,7 +7,7 @@ const agentLabels: Record<AgentType, string> = {
 }
 
 const envLabels: Record<string, string> = {
-  dev: 'Développement', uat: 'UAT', prod: 'Production',
+  dev: 'Development', uat: 'UAT', prod: 'Production',
 }
 
 interface EnvCardProps {
@@ -28,15 +28,15 @@ export function EnvCard({ env }: EnvCardProps) {
         <div className="flex flex-col items-end gap-1.5">
           <StatusDot status={env.frozen ? 'locked' : env.status === 'healthy' ? 'validated' : 'pending'} />
           {env.frozen && (
-            <Badge variant="warning">Gelé</Badge>
+            <Badge variant="warning">Frozen</Badge>
           )}
         </div>
       </div>
 
       <div>
-        <p className="label-mono mb-1.5">Agents autorisés</p>
+        <p className="label-mono mb-1.5">Allowed agents</p>
         {env.agents_allowed.length === 0 ? (
-          <p className="text-xs text-text-muted">Aucun agent autorisé</p>
+          <p className="text-xs text-text-muted">No agents allowed</p>
         ) : (
           <div className="flex flex-wrap gap-1.5">
             {env.agents_allowed.map((a) => (
@@ -47,10 +47,10 @@ export function EnvCard({ env }: EnvCardProps) {
       </div>
 
       <div>
-        <p className="label-mono mb-0.5">Dernier déploiement</p>
+        <p className="label-mono mb-0.5">Last deployment</p>
         <p className="text-xs text-text-secondary">
           {env.last_deploy
-            ? new Date(env.last_deploy).toLocaleDateString('fr-FR', {
+            ? new Date(env.last_deploy).toLocaleDateString('en-US', {
                 day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit',
               })
             : '—'}

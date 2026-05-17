@@ -9,9 +9,9 @@ const PAGE_TITLES: Record<string, string> = {
   '/agents/qa': 'QA Agent',
   '/agents/pm': 'PM Agent',
   '/agents/specs': 'Specs Agent',
-  '/tickets': 'Tickets Jira',
-  '/queue': 'File d\'attente',
-  '/environments': 'Environnements',
+  '/tickets': 'Tickets',
+  '/queue': 'Queue',
+  '/environments': 'Environments',
 }
 
 interface TopBarProps {

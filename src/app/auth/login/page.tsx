@@ -54,8 +54,8 @@ export default function LoginPage() {
             <span className="text-white/60 font-dm-sans text-lg">Forge</span>
           </div>
 
-          <p className="label-mono mb-1" style={{ color: 'rgba(255,255,255,0.4)' }}>Accès équipe</p>
-          <h1 className="text-white font-jost font-bold text-2xl mb-8">Connexion</h1>
+          <p className="label-mono mb-1" style={{ color: 'rgba(255,255,255,0.4)' }}>Team access</p>
+          <h1 className="text-white font-jost font-bold text-2xl mb-8">Sign in</h1>
 
           <Auth
             supabaseClient={supabase}
@@ -93,30 +93,6 @@ export default function LoginPage() {
             }}
             providers={[]}
             redirectTo={`${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`}
-            localization={{
-              variables: {
-                sign_in: {
-                  email_label: 'Email',
-                  password_label: 'Mot de passe',
-                  button_label: 'Se connecter',
-                  loading_button_label: 'Connexion en cours…',
-                  link_text: 'Déjà un compte ? Se connecter',
-                },
-                sign_up: {
-                  email_label: 'Email',
-                  password_label: 'Mot de passe',
-                  button_label: 'Créer un compte',
-                  loading_button_label: 'Création en cours…',
-                  link_text: 'Pas encore de compte ? S\'inscrire',
-                },
-                forgotten_password: {
-                  email_label: 'Email',
-                  button_label: 'Envoyer le lien',
-                  link_text: 'Mot de passe oublié ?',
-                  loading_button_label: 'Envoi en cours…',
-                },
-              },
-            }}
           />
         </div>
       </div>

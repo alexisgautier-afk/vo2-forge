@@ -11,32 +11,32 @@ interface AgentChatProps {
 }
 
 const PLACEHOLDER: Record<AgentType, string> = {
-  coding: 'Ex : Implémente la liste des clients avec pagination — SMCP-42',
-  qa: 'Ex : Revue la PR #87 et génère les cas de test pour le flow messagerie',
-  pm: 'Ex : Découpe SMCP-51 en sous-tâches et estime la complexité',
-  specs: 'Ex : Rédige la spec technique pour le module de notifications push',
+  coding: 'e.g. Implement the client list with pagination — SMCP-42',
+  qa: 'e.g. Review PR #87 and generate test cases for the messaging flow',
+  pm: 'e.g. Break down SMCP-51 into sub-tasks and estimate complexity',
+  specs: 'e.g. Write the technical spec for the push notifications module',
 }
 
 const SUGGESTED: Record<AgentType, string[]> = {
   coding: [
-    'Crée un composant ClientCard avec avatar, nom, dernière visite',
-    'Ajoute un hook useClientSearch avec debounce 300ms',
-    'Implémente la pagination infinie sur la liste clients',
+    'Create a ClientCard component with avatar, name, last visit',
+    'Add a useClientSearch hook with 300ms debounce',
+    'Implement infinite scroll on the client list',
   ],
   qa: [
-    'Génère les cas de test E2E pour la création de client',
-    'Revue la dernière PR ouverte sur le repo SMCP',
-    'Liste les edge cases du flow messagerie Twilio',
+    'Generate E2E test cases for client creation',
+    'Review the latest open PR on the SMCP repo',
+    'List edge cases for the Twilio messaging flow',
   ],
   pm: [
-    'Résume l\'état du sprint en cours',
-    'Identifie les dépendances bloquantes sur les tickets ouverts',
-    'Prépare l\'ordre du jour de la sprint review',
+    'Summarise the current sprint status',
+    'Identify blocking dependencies on open tickets',
+    'Prepare the sprint review agenda',
   ],
   specs: [
-    'Rédige la spec du module de notifications push',
-    'Produit un diagramme de séquence pour le flow auth Azure AD',
-    'Documente l\'architecture de la couche API Heroku',
+    'Write the spec for the push notifications module',
+    'Produce a sequence diagram for the Azure AD auth flow',
+    'Document the Heroku API layer architecture',
   ],
 }
 
@@ -73,7 +73,7 @@ export function AgentChat({ agentType }: AgentChatProps) {
       })
 
       if (!res.ok || !res.body) {
-        throw new Error(`Erreur serveur : ${res.status}`)
+        throw new Error(`Server error: ${res.status}`)
       }
 
       // Read the first SSE event to get the run_id, then hand off to LogStream
@@ -95,10 +95,10 @@ export function AgentChat({ agentType }: AgentChatProps) {
       }
       reader.cancel()
 
-      if (!runId) throw new Error('Impossible de démarrer le run')
+      if (!runId) throw new Error('Failed to start run')
       setRun({ runId })
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erreur inconnue')
+      setError(err instanceof Error ? err.message : 'Unknown error')
       setLoading(false)
     }
   }, [prompt, ticketId, agentType, loading])
@@ -130,7 +130,7 @@ export function AgentChat({ agentType }: AgentChatProps) {
           <div className="flex gap-3">
             {/* Ticket ID */}
             <div className="w-36 flex-shrink-0">
-              <SectionLabel className="mb-1.5">Ticket (optionnel)</SectionLabel>
+              <SectionLabel className="mb-1.5">Ticket (optional)</SectionLabel>
               <input
                 type="text"
                 value={ticketId}
@@ -142,7 +142,7 @@ export function AgentChat({ agentType }: AgentChatProps) {
 
             {/* Prompt */}
             <div className="flex-1">
-              <SectionLabel className="mb-1.5">Instruction</SectionLabel>
+              <SectionLabel className="mb-1.5">Prompt</SectionLabel>
               <textarea
                 ref={textareaRef}
                 value={prompt}
@@ -159,7 +159,7 @@ export function AgentChat({ agentType }: AgentChatProps) {
 
           {/* Suggested prompts */}
           <div>
-            <SectionLabel className="mb-2">Suggestions</SectionLabel>
+            <SectionLabel className="mb-2">Suggested prompts</SectionLabel>
             <div className="flex flex-wrap gap-2">
               {SUGGESTED[agentType].map((s) => (
                 <button
@@ -174,13 +174,13 @@ export function AgentChat({ agentType }: AgentChatProps) {
           </div>
 
           <div className="flex items-center justify-between">
-            <p className="text-xs text-text-muted">⌘ + Entrée pour lancer</p>
+            <p className="text-xs text-text-muted">⌘ + Enter to run</p>
             <Button
               onClick={handleSubmit}
               loading={loading}
               disabled={!prompt.trim()}
             >
-              Lancer l'agent
+              Run agent
             </Button>
           </div>
 
@@ -204,7 +204,7 @@ export function AgentChat({ agentType }: AgentChatProps) {
           {/* Output */}
           {output && (
             <div className="card space-y-3">
-              <SectionLabel>Sortie de l'agent</SectionLabel>
+              <SectionLabel>Agent output</SectionLabel>
               <pre className="text-xs text-text-secondary whitespace-pre-wrap leading-relaxed font-mono overflow-x-auto">
                 {output}
               </pre>
@@ -221,14 +221,14 @@ export function AgentChat({ agentType }: AgentChatProps) {
           {!loading && (
             <div className="flex gap-2">
               <Button variant="secondary" onClick={handleReset}>
-                Nouveau run
+                New run
               </Button>
               {output && (
                 <Button
                   variant="ghost"
                   onClick={() => navigator.clipboard.writeText(output)}
                 >
-                  Copier la sortie
+                  Copy output
                 </Button>
               )}
             </div>

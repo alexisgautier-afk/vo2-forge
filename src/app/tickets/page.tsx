@@ -18,7 +18,7 @@ export default async function TicketsPage() {
         <div>
           <h2 className="text-xl font-semibold text-text-primary font-jost">Tickets</h2>
           <p className="text-sm text-text-muted mt-0.5">
-            Gestion des tickets du projet SMCP
+            SMCP project ticket management
           </p>
         </div>
         <TicketBoard initialTickets={(tickets as Ticket[]) ?? []} />

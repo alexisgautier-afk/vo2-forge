@@ -49,8 +49,8 @@ export async function POST(req: NextRequest) {
     async start(controller) {
       try {
         controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'run_start', run_id: run.id })}\n\n`))
-        await writeLog(controller, 'info', `Agent ${agent_type} démarré${ticket_id ? ` — ${ticket_id}` : ''}`)
-        await writeLog(controller, 'info', 'Lancement du Claude CLI…')
+        await writeLog(controller, 'info', `Agent ${agent_type} started${ticket_id ? ` — ${ticket_id}` : ''}`)
+        await writeLog(controller, 'info', 'Launching Claude CLI…')
 
         const result = await runClaude(
           CLAUDE_BIN,
@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
           },
         )
 
-        await writeLog(controller, 'success', `Terminé — ${result.tokensUsed} tokens utilisés`)
+        await writeLog(controller, 'success', `Done — ${result.tokensUsed} tokens used`)
 
         await supabase
           .from('agent_runs')
@@ -75,7 +75,7 @@ export async function POST(req: NextRequest) {
           encoder.encode(`data: ${JSON.stringify({ type: 'run_done', run_id: run.id, output: result.output, tokens_used: result.tokensUsed })}\n\n`)
         )
       } catch (err) {
-        const message = err instanceof Error ? err.message : 'Erreur inconnue'
+        const message = err instanceof Error ? err.message : 'Unknown error'
         await supabase.from('agent_runs').update({ status: 'error', error: message }).eq('id', run.id)
         controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'run_error', run_id: run.id, message })}\n\n`))
       } finally {

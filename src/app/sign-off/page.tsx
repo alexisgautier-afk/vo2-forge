@@ -20,16 +20,16 @@ export default async function SignOffPage() {
           <span className="text-white/30">|</span>
           <span className="text-white/60 font-dm-sans">Forge</span>
           <span className="text-white/20 mx-1">·</span>
-          <span className="text-white/80 text-sm font-dm-sans">Validation SMCP</span>
+          <span className="text-white/80 text-sm font-dm-sans">SMCP Sign-off</span>
         </div>
       </header>
 
       <main className="max-w-3xl mx-auto px-6 py-10 space-y-2">
         <h1 className="text-2xl font-bold font-jost text-text-primary">
-          Sign-off des features
+          Feature sign-offs
         </h1>
         <p className="text-sm text-text-muted mb-8">
-          Validez ou rejetez les features soumises par l'équipe VO2 avant mise en production.
+          Approve or reject features submitted by the VO2 team before production.
         </p>
 
         <SignoffBoard initialRequests={(requests as SignoffRequest[]) ?? []} />
