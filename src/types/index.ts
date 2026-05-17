@@ -27,13 +27,19 @@ export interface AgentLog {
   message: string
 }
 
+export type TicketPriority = 'low' | 'medium' | 'high' | 'critical'
+
 export interface Ticket {
   id: string
   name: string
+  description?: string
   status: TicketStatus
+  priority: 'low' | 'medium' | 'high' | 'critical'
   assignee?: string
-  url?: string
+  sprint?: string
   updated_at: string
+  created_at: string
+  created_by?: string
 }
 
 export interface SignoffRequest {

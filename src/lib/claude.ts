@@ -1,9 +1,4 @@
-import Anthropic from '@anthropic-ai/sdk'
 import type { AgentType } from '@/types'
-
-export const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-})
 
 export const AGENT_SYSTEM_PROMPTS: Record<AgentType, string> = {
   coding: `Tu es un agent de développement senior spécialisé React Native et TypeScript.

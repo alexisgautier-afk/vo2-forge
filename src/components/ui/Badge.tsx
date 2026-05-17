@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 
-type BadgeVariant = 'default' | 'success' | 'warning' | 'error' | 'info' | 'muted'
+export type BadgeVariant = 'default' | 'success' | 'warning' | 'error' | 'info' | 'muted'
 
 const variantClasses: Record<BadgeVariant, string> = {
   default: 'bg-blue-vo2-50 text-blue-vo2-700 border border-blue-vo2-100',
