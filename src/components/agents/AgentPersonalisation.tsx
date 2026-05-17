@@ -170,13 +170,6 @@ interface AgentPersonalisationProps {
 export function AgentPersonalisation({ agentType }: AgentPersonalisationProps) {
   return (
     <div className="space-y-8">
-      <div className="card space-y-1">
-        <p className="text-xs text-text-muted leading-relaxed">
-          Instructions and files here are injected into every agent's system prompt at runtime.
-          Use this for project-wide rules, stack conventions, and context that all agents must know.
-        </p>
-      </div>
-
       <div className="card space-y-5">
         <div>
           <h3 className="text-sm font-semibold text-text-primary font-jost">Global personalisation</h3>
