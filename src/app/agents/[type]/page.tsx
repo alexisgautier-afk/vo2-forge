@@ -1,7 +1,6 @@
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { AppShell } from '@/components/layout/AppShell'
-import { AgentSelector } from '@/components/agents/AgentSelector'
 import { AgentChat } from '@/components/agents/AgentChat'
 import { AgentPersonalisation } from '@/components/agents/AgentPersonalisation'
 import { AgentTabs } from '@/components/agents/AgentTabs'
@@ -87,8 +86,6 @@ export default async function AgentPage({ params, searchParams }: AgentPageProps
   return (
     <AppShell userEmail={user?.email}>
       <div className="space-y-6">
-        <AgentSelector />
-
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Main area — left 2/3 */}
           <div className="lg:col-span-2 space-y-4">
