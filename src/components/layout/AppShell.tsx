@@ -12,10 +12,10 @@ interface AppShellProps {
 export function AppShell({ children, userEmail, header }: AppShellProps) {
   return (
     <div className="flex h-screen bg-surface overflow-hidden">
-      <Sidebar />
+      <Sidebar userEmail={userEmail} />
       <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
         <FreezeBanner />
-        <TopBar userEmail={userEmail} header={header} />
+        <TopBar header={header} />
         <main className="flex-1 overflow-y-auto p-6">
           {children}
         </main>

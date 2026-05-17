@@ -9,17 +9,17 @@ const TOP_NAV = [
 ]
 
 const AGENTS = [
-  { href: '/agents/ba',     label: 'BA',         icon: '◎' },
-  { href: '/agents/pm',     label: 'PM',          icon: '◈' },
-  { href: '/agents/coding', label: 'Developer',   icon: '⟨/⟩' },
-  { href: '/agents/specs',  label: 'Specs',       icon: '✦' },
-  { href: '/agents/qa',     label: 'QA',          icon: '✓' },
+  { href: '/agents/ba',     label: 'BA',        icon: '◎' },
+  { href: '/agents/pm',     label: 'PM',         icon: '◈' },
+  { href: '/agents/coding', label: 'Developer',  icon: '⟨/⟩' },
+  { href: '/agents/specs',  label: 'Specs',      icon: '✦' },
+  { href: '/agents/qa',     label: 'QA',         icon: '✓' },
 ]
 
 const BOTTOM_NAV = [
-  { href: '/tickets',      label: 'Tickets',      icon: '▤' },
-  { href: '/queue',        label: 'Queue',         icon: '≡' },
-  { href: '/environments', label: 'Environments',  icon: '◎' },
+  { href: '/tickets',      label: 'Tickets',     icon: '▤' },
+  { href: '/queue',        label: 'Queue',        icon: '≡' },
+  { href: '/environments', label: 'Environments', icon: '◎' },
 ]
 
 const linkCls = (active: boolean) => [
@@ -29,7 +29,11 @@ const linkCls = (active: boolean) => [
     : 'text-white/60 hover:text-white hover:bg-white/10',
 ].join(' ')
 
-export function Sidebar() {
+interface SidebarProps {
+  userEmail?: string
+}
+
+export function Sidebar({ userEmail }: SidebarProps) {
   const pathname = usePathname()
   const onAgentPage = pathname.startsWith('/agents/')
   const [open, setOpen] = useState(onAgentPage)
@@ -62,7 +66,7 @@ export function Sidebar() {
         {/* Agents dropdown */}
         <button
           onClick={() => setOpen((v) => !v)}
-          className={linkCls(onAgentPage && !open ? true : false) + ' w-full text-left'}
+          className={linkCls(onAgentPage && !open) + ' w-full text-left'}
         >
           <span className="w-4 text-center text-xs opacity-70">⚙</span>
           <span className="flex-1">Agents</span>
@@ -72,7 +76,7 @@ export function Sidebar() {
         {open && (
           <div className="ml-3 pl-3 border-l border-white/10 flex flex-col gap-0.5 mt-0.5">
             {AGENTS.map(({ href, label, icon }) => (
-              <Link key={href} href={href} className={linkCls(pathname === href || pathname.startsWith(href))}>
+              <Link key={href} href={href} className={linkCls(pathname.startsWith(href))}>
                 <span className="w-4 text-center text-xs opacity-70">{icon}</span>
                 {label}
               </Link>
@@ -90,11 +94,12 @@ export function Sidebar() {
         </div>
       </nav>
 
-      {/* Sprint badge */}
-      <div className="px-5 py-4 border-t border-white/10">
-        <p className="label-mono mb-1" style={{ color: 'rgba(255,255,255,0.35)' }}>Current sprint</p>
-        <p className="text-white/80 text-xs font-medium">Sprint 12</p>
-        <p className="text-white/40 text-xs">May 12 – 26, 2026</p>
+      {/* User */}
+      <div className="px-4 py-4 border-t border-white/10 flex items-center gap-3">
+        <div className="size-8 rounded-full bg-blue-vo2/30 border border-blue-vo2/50 flex items-center justify-center text-white text-xs font-semibold shrink-0">
+          {userEmail ? userEmail[0].toUpperCase() : 'V'}
+        </div>
+        <p className="text-white/60 text-xs truncate">{userEmail ?? '—'}</p>
       </div>
     </aside>
   )
