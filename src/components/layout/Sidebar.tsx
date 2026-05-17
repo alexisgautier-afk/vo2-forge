@@ -1,22 +1,38 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
-const NAV_ITEMS = [
+const TOP_NAV = [
   { href: '/dashboard', label: 'Dashboard', icon: '⬡' },
-  { href: '/agents/ba', label: 'BA Agent', icon: '◎' },
-  { href: '/agents/coding', label: 'Coding Agent', icon: '⟨/⟩' },
-  { href: '/agents/qa', label: 'QA Agent', icon: '✓' },
-  { href: '/agents/pm', label: 'PM Agent', icon: '◈' },
-  { href: '/agents/specs', label: 'Specs Agent', icon: '✦' },
-  { href: '/tickets', label: 'Tickets', icon: '▤' },
-  { href: '/queue', label: 'Queue', icon: '≡' },
-  { href: '/environments', label: 'Environments', icon: '◎' },
 ]
+
+const AGENTS = [
+  { href: '/agents/ba',     label: 'BA',         icon: '◎' },
+  { href: '/agents/pm',     label: 'PM',          icon: '◈' },
+  { href: '/agents/coding', label: 'Developer',   icon: '⟨/⟩' },
+  { href: '/agents/specs',  label: 'Specs',       icon: '✦' },
+  { href: '/agents/qa',     label: 'QA',          icon: '✓' },
+]
+
+const BOTTOM_NAV = [
+  { href: '/tickets',      label: 'Tickets',      icon: '▤' },
+  { href: '/queue',        label: 'Queue',         icon: '≡' },
+  { href: '/environments', label: 'Environments',  icon: '◎' },
+]
+
+const linkCls = (active: boolean) => [
+  'flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors',
+  active
+    ? 'bg-blue-vo2 text-white font-medium'
+    : 'text-white/60 hover:text-white hover:bg-white/10',
+].join(' ')
 
 export function Sidebar() {
   const pathname = usePathname()
+  const onAgentPage = pathname.startsWith('/agents/')
+  const [open, setOpen] = useState(onAgentPage)
 
   return (
     <aside className="flex flex-col w-56 flex-shrink-0 bg-blue-deep h-screen sticky top-0">
@@ -29,27 +45,44 @@ export function Sidebar() {
 
       {/* Nav */}
       <nav className="flex-1 px-3 py-4 flex flex-col gap-0.5 overflow-y-auto">
-        <p className="label-mono px-2 mb-2" style={{ color: 'rgba(255,255,255,0.35)' }}>
-          nav
-        </p>
-        {NAV_ITEMS.map(({ href, label, icon }) => {
-          const active = pathname === href || (href !== '/dashboard' && pathname.startsWith(href))
-          return (
-            <Link
-              key={href}
-              href={href}
-              className={[
-                'flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors',
-                active
-                  ? 'bg-blue-vo2 text-white font-medium'
-                  : 'text-white/60 hover:text-white hover:bg-white/10',
-              ].join(' ')}
-            >
+        <p className="label-mono px-2 mb-2" style={{ color: 'rgba(255,255,255,0.35)' }}>nav</p>
+
+        {TOP_NAV.map(({ href, label, icon }) => (
+          <Link key={href} href={href} className={linkCls(pathname === href)}>
+            <span className="w-4 text-center text-xs opacity-70">{icon}</span>
+            {label}
+          </Link>
+        ))}
+
+        {/* Agents dropdown */}
+        <button
+          onClick={() => setOpen((v) => !v)}
+          className={linkCls(onAgentPage && !open ? true : false) + ' w-full text-left'}
+        >
+          <span className="w-4 text-center text-xs opacity-70">⚙</span>
+          <span className="flex-1">Agents</span>
+          <span className="text-xs opacity-50">{open ? '▲' : '▼'}</span>
+        </button>
+
+        {open && (
+          <div className="ml-3 pl-3 border-l border-white/10 flex flex-col gap-0.5 mt-0.5">
+            {AGENTS.map(({ href, label, icon }) => (
+              <Link key={href} href={href} className={linkCls(pathname === href || pathname.startsWith(href))}>
+                <span className="w-4 text-center text-xs opacity-70">{icon}</span>
+                {label}
+              </Link>
+            ))}
+          </div>
+        )}
+
+        <div className="mt-2 flex flex-col gap-0.5">
+          {BOTTOM_NAV.map(({ href, label, icon }) => (
+            <Link key={href} href={href} className={linkCls(pathname === href)}>
               <span className="w-4 text-center text-xs opacity-70">{icon}</span>
               {label}
             </Link>
-          )
-        })}
+          ))}
+        </div>
       </nav>
 
       {/* Sprint badge */}
