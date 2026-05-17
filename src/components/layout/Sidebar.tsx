@@ -37,8 +37,13 @@ export function Sidebar() {
   return (
     <aside className="flex flex-col w-56 flex-shrink-0 bg-blue-deep h-screen sticky top-0">
       {/* Logo */}
-      <div className="flex items-center gap-2 px-5 h-14 border-b border-white/10">
-        <span className="text-white font-jost font-bold text-base tracking-tight">VO2</span>
+      <div className="flex items-center gap-2.5 px-5 h-14 border-b border-white/10">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="https://ygdrbuifqrcdwstwniay.supabase.co/storage/v1/object/sign/Assets/VO2%20Group%20Logo_White.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8zMjgyMTAwNi1hMWFmLTQ0MzktYTIwNS1mNmI2YTc4MzNkZjgiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJBc3NldHMvVk8yIEdyb3VwIExvZ29fV2hpdGUucG5nIiwiaWF0IjoxNzc5MDQ3ODU4LCJleHAiOjE4MTA1ODM4NTh9.TuxKpqG84oAIp0piYee3BXEEaVEA8ZxrNjusBmP4CnY"
+          alt="VO2 Group"
+          className="h-7 w-auto object-contain"
+        />
         <span className="text-white/40 text-sm">|</span>
         <span className="text-white/70 font-dm-sans text-sm">Forge</span>
       </div>
